@@ -302,101 +302,200 @@ const InterviewList: React.FC = () => {
   //   </div>
   // );
 
-  return (
-    <div className="min-h-screen bg-black text-white p-6 md:p-12 space-y-8">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 text-transparent bg-clip-text">
-          Interview History
-        </h2>
-        <span className="px-4 py-2 rounded-full bg-black/30 border border-purple-900/30 text-purple-300 font-medium">
-          {interviews.length} {interviews.length === 1 ? 'Interview' : 'Interviews'}
-        </span>
-      </div>
+  // return (
+    // <div className="min-h-screen bg-black text-white p-6 md:p-12 space-y-8">
+    //   <div className="flex items-center justify-between mb-8">
+    //     <h2 className="text-4xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 text-transparent bg-clip-text">
+    //       Interview History
+    //     </h2>
+    //     <span className="px-4 py-2 rounded-full bg-black/30 border border-purple-900/30 text-purple-300 font-medium">
+    //       {interviews.length} {interviews.length === 1 ? 'Interview' : 'Interviews'}
+    //     </span>
+    //   </div>
   
-      {interviews.length > 0 ? (
-        <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          <AnimatePresence>
-            {interviews.map((interview) => (
-              <motion.div
-                key={interview.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="bg-black/40 backdrop-blur-sm border border-purple-900/30 rounded-3xl overflow-hidden shadow-2xl hover:shadow-purple-900/50 transition-all duration-300 hover:scale-[1.02]"
-              >
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <h3 className="text-xl font-semibold text-purple-400">
-                        Interview 
-                      </h3>
-                      {interview.feedback && (
-                        <span className="px-3 py-1 text-xs font-medium text-green-400 bg-green-400/10 rounded-full ring-1 ring-green-400/20">
-                          Feedback Available
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center space-x-2 text-purple-300">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm font-medium">{formatDate(interview.created_at)}</span>
-                    </div>
-                  </div>
+    //   {interviews.length > 0 ? (
+    //     <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+    //       <AnimatePresence>
+    //         {interviews.map((interview) => (
+    //           <motion.div
+    //             key={interview.id}
+    //             initial={{ opacity: 0, scale: 0.95 }}
+    //             animate={{ opacity: 1, scale: 1 }}
+    //             exit={{ opacity: 0, scale: 0.95 }}
+    //             transition={{ duration: 0.3 }}
+    //             className="bg-black/40 backdrop-blur-sm border border-purple-900/30 rounded-3xl overflow-hidden shadow-2xl hover:shadow-purple-900/50 transition-all duration-300 hover:scale-[1.02]"
+    //           >
+    //             <div className="p-6 space-y-4">
+    //               <div className="flex items-center justify-between">
+    //                 <div className="flex items-center space-x-4">
+    //                   <h3 className="text-xl font-semibold text-purple-400">
+    //                     Interview 
+    //                   </h3>
+    //                   {interview.feedback && (
+    //                     <span className="px-3 py-1 text-xs font-medium text-green-400 bg-green-400/10 rounded-full ring-1 ring-green-400/20">
+    //                       Feedback Available
+    //                     </span>
+    //                   )}
+    //                 </div>
+    //                 <div className="flex items-center space-x-2 text-purple-300">
+    //                   <Calendar className="w-4 h-4" />
+    //                   <span className="text-sm font-medium">{formatDate(interview.created_at)}</span>
+    //                 </div>
+    //               </div>
                   
-                  <p className="text-sm text-purple-200 opacity-80 leading-relaxed">
-                    {getConversationPreview(interview.conversation)}
-                  </p>
+    //               <p className="text-sm text-purple-200 opacity-80 leading-relaxed">
+    //                 {getConversationPreview(interview.conversation)}
+    //               </p>
   
-                  <div className="flex justify-between items-center">
-                    <Button
-                      onClick={() => generateFeedback(interview.id)}
-                      disabled={feedbackStatus[interview.id]?.loading}
-                     className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300 rounded-full"
-                    >
-                      {feedbackStatus[interview.id]?.loading ? (
-                        <div className="flex items-center space-x-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-                          <span>Generating...</span>
-                        </div>
-                      ) : interview.feedback ? (
-                        'View Feedback'
-                      ) : (
-                        'Generate Feedback'
-                      )}
-                    </Button>
+    //               <div className="flex justify-between items-center">
+    //                 <Button
+    //                   onClick={() => generateFeedback(interview.id)}
+    //                   disabled={feedbackStatus[interview.id]?.loading}
+    //                  className="bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300 rounded-full"
+    //                 >
+    //                   {feedbackStatus[interview.id]?.loading ? (
+    //                     <div className="flex items-center space-x-2">
+    //                       <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+    //                       <span>Generating...</span>
+    //                     </div>
+    //                   ) : interview.feedback ? (
+    //                     'View Feedback'
+    //                   ) : (
+    //                     'Generate Feedback'
+    //                   )}
+    //                 </Button>
   
-                    {feedbackStatus[interview.id]?.error && (
-                      <p className="text-sm text-red-400">
-                        {feedbackStatus[interview.id]?.error}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+    //                 {feedbackStatus[interview.id]?.error && (
+    //                   <p className="text-sm text-red-400">
+    //                     {feedbackStatus[interview.id]?.error}
+    //                   </p>
+    //                 )}
+    //               </div>
+    //             </div>
+    //           </motion.div>
+    //         ))}
+    //       </AnimatePresence>
+    //     </div>
+    //   ) : (
+    //     <motion.div 
+    //       initial={{ opacity: 0, y: 20 }}
+    //       animate={{ opacity: 1, y: 0 }}
+    //       className="text-center p-12 bg-black/40 backdrop-blur-sm rounded-3xl border border-purple-900/30 shadow-2xl"
+    //     >
+    //       <MessageSquare className="mx-auto h-16 w-16 text-purple-400 mb-6" />
+    //       <h3 className="text-2xl font-semibold text-purple-300 mb-3">No Interviews Yet</h3>
+    //       <p className="text-purple-200 max-w-md mx-auto opacity-80">
+    //         Start a new interview to practice and receive detailed feedback on your performance.
+    //       </p>
+    //     </motion.div>
+    //   )}
+  
+    //   <FeedbackModal 
+    //     interview={selectedInterview} 
+    //     isModalOpen={isModalOpen}
+    //     setIsModalOpen={setIsModalOpen}
+    //   />
+    // </div>
+    return (
+      <div className="min-h-screen bg-black text-white p-6 md:p-12 space-y-10">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-4xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 text-transparent bg-clip-text">
+            Interview History
+          </h2>
+          <span className="px-4 py-2 rounded-full bg-black/30 border border-purple-900/30 text-purple-300 font-medium">
+            {interviews.length} {interviews.length === 1 ? 'Interview' : 'Interviews'}
+          </span>
         </div>
-      ) : (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center p-12 bg-black/40 backdrop-blur-sm rounded-3xl border border-purple-900/30 shadow-2xl"
-        >
-          <MessageSquare className="mx-auto h-16 w-16 text-purple-400 mb-6" />
-          <h3 className="text-2xl font-semibold text-purple-300 mb-3">No Interviews Yet</h3>
-          <p className="text-purple-200 max-w-md mx-auto opacity-80">
-            Start a new interview to practice and receive detailed feedback on your performance.
-          </p>
-        </motion.div>
-      )}
-  
-      <FeedbackModal 
-        interview={selectedInterview} 
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-      />
-    </div>
-  );
+    
+        {interviews.length > 0 ? (
+          <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-10">
+            <AnimatePresence>
+              {interviews.map((interview) => (
+                <motion.div
+                  key={interview.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-black/40 backdrop-blur-sm border border-purple-900/30 rounded-3xl overflow-hidden shadow-2xl hover:shadow-purple-900/50 transition-all duration-300 hover:scale-[1.02] h-64"
+                >
+                  <div className="p-8 h-full flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <h3 className="text-2xl font-semibold text-purple-400">
+                            Interview 
+                          </h3>
+                          {interview.feedback && (
+                            <span className="px-3 py-1 text-xs font-medium text-green-400 bg-green-400/10 rounded-full ring-1 ring-green-400/20">
+                              Feedback Available
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2 text-purple-300 bg-purple-900/20 px-4 py-2 rounded-full">
+                          <Calendar className="w-4 h-4" />
+                          <span className="text-sm font-medium">{formatDate(interview.created_at)}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="h-24 overflow-hidden">
+                        <p className="text-base text-purple-200 opacity-80 leading-relaxed line-clamp-3">
+                          {getConversationPreview(interview.conversation)}
+                        </p>
+                      </div>
+                    </div>
+    
+                    <div className="flex justify-center items-center">
+                      <Button
+                        onClick={() => generateFeedback(interview.id)}
+                        disabled={feedbackStatus[interview.id]?.loading}
+                        className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white transition-all duration-300 rounded-full px-8 py-4 w-1/2"
+                      >
+                        {feedbackStatus[interview.id]?.loading ? (
+                          <div className="flex items-center space-x-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                            <span>Generating...</span>
+                          </div>
+                        ) : interview.feedback ? (
+                          'View Feedback'
+                        ) : (
+                          'Generate Feedback'
+                        )}
+                      </Button>
+    
+                      {feedbackStatus[interview.id]?.error && (
+                        <p className="text-sm text-red-400 absolute mt-16">
+                          {feedbackStatus[interview.id]?.error}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center p-12 bg-black/40 backdrop-blur-sm rounded-3xl border border-purple-900/30 shadow-2xl"
+          >
+            <MessageSquare className="mx-auto h-16 w-16 text-purple-400 mb-6" />
+            <h3 className="text-2xl font-semibold text-purple-300 mb-3">No Interviews Yet</h3>
+            <p className="text-purple-200 max-w-md mx-auto opacity-80">
+              Start a new interview to practice and receive detailed feedback on your performance.
+            </p>
+          </motion.div>
+        )}
+    
+        <FeedbackModal 
+          interview={selectedInterview} 
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
+      </div>
+    
+      )
 };
 
 export default InterviewList;

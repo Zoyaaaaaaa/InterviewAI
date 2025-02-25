@@ -232,7 +232,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ interview, isModalOpen, s
               Interview Feedback Analysis
             </DialogTitle>
             <DialogDescription className="text-gray-400 text-lg">
-              Detailed feedback for Interview #{interview.id}
+              Detailed feedback for Interview 
             </DialogDescription>
           </DialogHeader>
 
