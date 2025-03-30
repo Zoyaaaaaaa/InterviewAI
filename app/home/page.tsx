@@ -476,7 +476,7 @@ export default function LandingPage() {
             Ready to Transform Your Interview Skills?
           </h2>
           <p className="text-xl mb-12 max-w-2xl mx-auto text-gray-400">
-            Join thousands of students who've successfully navigated their placement interviews with our AI-powered
+            Join thousands of students who have successfully navigated their placement interviews with our AI-powered
             platform.
           </p>
           <div className="flex justify-center space-x-6">
