@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
       schema: GeneratedFeedbackSchema,
       prompt: `Analyze this interview conversation and provide detailed feedback. 
         Interview transcript: ${interviewData.conversation}
-
+        BE STRICT IN GIVING SCORE PLEASE AND PROVIDE REASONING FOR EACH SCORE.
         Provide an analysis that includes:
         1. Technical competency evaluation (score between 0-1)
         2. Communication skills assessment (score between 0-1)

@@ -1,166 +1,24 @@
-
-// 'use client'
-// import { useState } from 'react';
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import { useRouter } from 'next/navigation';
-
-// const ResumeUploadPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-//   const [file, setFile] = useState<File | null>(null);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState('');
-//   const router = useRouter();
-
-//   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const selectedFile = event.target.files?.[0];
-//     if (selectedFile && selectedFile.type === 'application/pdf') {
-//       setFile(selectedFile);
-//       setError('');
-//     } else {
-//       setError('Please select a PDF file');
-//       setFile(null);
-//     }
-//   };
-
-//   const handleSubmit = async (event: React.FormEvent) => {
-//     event.preventDefault();
-//     if (!file) {
-//       setError('Please select a PDF file first');
-//       return;
-//     }
-
-//     setLoading(true);
-//     setError('');
-
-//     try {
-//       const formData = new FormData();
-//       formData.append('pdf', file);
-
-//       const response = await fetch('/api/process-resume', {
-//         method: 'POST',
-//         body: formData,
-//       });
-
-//       if (!response.ok) {
-//         const data = await response.json();
-//         throw new Error(data.error || 'Failed to process resume');
-//       }
-
-//       const data = await response.json();
-//       console.log('Resume processed successfully:', data);
-
-//       // Redirect to the interview page
-//       router.push('/interview');
-//     } catch (err) {
-//       setError(err.message || 'An error occurred while processing the resume');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-//       <Card className="w-full max-w-md">
-//         <CardHeader>
-//           <CardTitle>Upload Your Resume</CardTitle>
-//           <CardDescription>Please upload your resume in PDF format to begin the interview.</CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <form onSubmit={handleSubmit} className="space-y-4">
-//             <div className="grid w-full items-center gap-1.5">
-//               <Label htmlFor="resume">Resume (PDF)</Label>
-//               <Input id="resume" type="file" accept="application/pdf" onChange={handleFileChange} />
-//             </div>
-//             {error && <p className="text-red-500 text-sm">{error}</p>}
-//             <div className="flex justify-end gap-2">
-//               <Button type="button" variant="outline" onClick={onClose}>
-//                 Cancel
-//               </Button>
-//               <Button type="submit" disabled={!file || loading}>
-//                 {loading ? 'Processing...' : 'Begin Interview'}
-//               </Button>
-//             </div>
-//           </form>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default ResumeUploadPopup;
-
+// components/ResumeUploadPopup.tsx
 'use client'
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useRouter } from 'next/navigation';
+import { Upload } from "lucide-react";
 
-const ResumeUploadPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+interface ResumeUploadPopupProps {
+  onClose: () => void;
+  onResumeProcessed: (resumeData: string) => void;
+}
+
+const ResumeUploadPopup: React.FC<ResumeUploadPopupProps> = ({ onClose, onResumeProcessed }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile && selectedFile.type === 'application/pdf') {
-      setFile(selectedFile);
-      setError('');
-    } else {
-      setError('Please select a PDF file');
-      setFile(null);
-    }
-  };
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  // const handleSubmit = async (event: React.FormEvent) => {
-  //   event.preventDefault();
-  //   if (!file) {
-  //     setError('Please select a PDF file first');
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   setError('');
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('pdf', file);
-
-  //     const response = await fetch('/api/process-resume', {
-  //       method: 'POST',
-  //       body: formData,
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error('Failed to process resume');
-  //     }
-
-  //     const { resumeData } = await response.json();
-  //     console.log(resumeData);
-  //       //pass resume data to /chat route
-  //     router.push("/api/chat")
-    
-  //     // Redirect to the interview page with resume data
-  //     // router.push(`/interview?resume=${encodeURIComponent(JSON.stringify(resumeData))}`);
-  //   } catch (err) {
-  //     setError('An error occurred while processing the resume');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!file) {
-      setError('Please select a PDF file first');
-      return;
-    }
-
-    setLoading(true);
+    setIsLoading(true);
     setError('');
 
     try {
@@ -176,46 +34,130 @@ const ResumeUploadPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         throw new Error('Failed to process resume');
       }
 
-      const { resumeData } = await response.json();
-      console.log(resumeData);
-      
-      // Store resumeData in sessionStorage or pass it directly to the chat route
-      sessionStorage.setItem('resumeData', JSON.stringify(resumeData));
-      
-      // Redirect to the chat page
-      // router.push("/chat");
-    
+      const data = await response.json();
+      onResumeProcessed(data.summary);
+      onClose();
     } catch (err) {
-      setError('An error occurred while processing the resume');
+      console.error('Error uploading resume:', err);
+      setError('Failed to process resume. Please try again.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    // <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    //   {/* <Card className="w-full max-w-md">
+    //     <CardHeader>
+    //       <CardTitle>Upload Your Resume</CardTitle>
+    //       <CardDescription>
+    //         Upload your resume to help tailor the interview questions to your experience.
+    //       </CardDescription>
+    //     </CardHeader>
+    //     <CardContent>
+    //       <div className="space-y-4">
+    //         <div className="flex items-center justify-center w-full">
+    //           <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+    //             <div className="flex flex-col items-center justify-center pt-5 pb-6">
+    //               <Upload className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400" />
+    //               <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+    //                 <span className="font-semibold">Click to upload</span> or drag and drop
+    //               </p>
+    //               <p className="text-xs text-gray-500 dark:text-gray-400">PDF (MAX. 5MB)</p>
+    //             </div>
+    //             <input 
+    //               type="file" 
+    //               className="hidden" 
+    //               accept=".pdf" 
+    //               onChange={handleFileUpload}
+    //               disabled={isLoading}
+    //             />
+    //           </label>
+    //         </div>
+            
+    //         {error && (
+    //           <p className="text-sm text-red-500 text-center">{error}</p>
+    //         )}
+            
+    //         <div className="flex justify-end gap-2">
+    //           <Button 
+    //             variant="outline" 
+    //             onClick={onClose}
+    //             disabled={isLoading}
+    //           >
+    //             Cancel
+    //           </Button>
+    //           <Button 
+    //             variant="secondary" 
+    //             onClick={() => {
+    //               onResumeProcessed('');
+    //               onClose();
+    //             }}
+    //             disabled={isLoading}
+    //           >
+    //             Skip Resume
+    //           </Button>
+    //         </div>
+    //       </div>
+    //     </CardContent>
+    //   </Card> */}
+      
+    // </div>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-md bg-black-900 text-white border border-neutral-800 shadow-xl rounded-xl">
         <CardHeader>
-          <CardTitle>Upload Your Resume</CardTitle>
-          <CardDescription>Please upload your resume in PDF format to begin the interview.</CardDescription>
+          <CardTitle className="text-white text-xl font-semibold">Upload Your Resume</CardTitle>
+          <CardDescription className="text-neutral-400">
+            Help us tailor your experience by uploading your resume. PDF only.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="resume">Resume (PDF)</Label>
-              <Input id="resume" type="file" accept="application/pdf" onChange={handleFileChange} />
+          <div className="space-y-5">
+            <div className="flex items-center justify-center w-full">
+              <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-black-500 rounded-lg cursor-pointer bg-neutral-800 hover:bg-neutral-700 transition-colors duration-200">
+                <div className="flex flex-col items-center justify-center pt-4 pb-5">
+                  <Upload className="w-7 h-7 mb-3 text-neutral-400" />
+                  <p className="text-sm text-white font-medium">
+                    Click to upload or drag & drop
+                  </p>
+                  <p className="text-xs text-neutral-400 mt-1">PDF, max 5MB</p>
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".pdf"
+                  onChange={handleFileUpload}
+                  disabled={isLoading}
+                />
+              </label>
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onClose}>
+
+            {error && (
+              <p className="text-sm text-red-400 text-center">{error}</p>
+            )}
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="ghost"
+                onClick={onClose}
+                disabled={isLoading}
+                className="text-neutral-300 hover:text-white hover:bg-neutral-800"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={!file || loading}>
-                {loading ? 'Processing...' : 'Begin Interview'}
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  onResumeProcessed('');
+                  onClose();
+                }}
+                disabled={isLoading}
+                className="bg-neutral-700 text-white hover:bg-neutral-600"
+              >
+                Skip Resume
               </Button>
             </div>
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>

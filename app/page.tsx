@@ -4,11 +4,8 @@
 // import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
 // import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 
-import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
-import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { Link } from "lucide-react";
 
 // export default async function Index() {
@@ -31,7 +28,7 @@ export default function Home() {
         <p className="text-xl text-muted-foreground max-w-2xl">
           Discover new adventures and break out of your routine with our AI-powered local adventure generator.
         </p>
-        {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
+        {/* {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />} */}
         <Link href="/activity">
           <Button size="lg" className="mt-4">
             Generate a Wander

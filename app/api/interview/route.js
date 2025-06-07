@@ -31,7 +31,7 @@ Clarify as needed ("Can you expand on that?").
 End after 6 questions: "Thank you for sharing! Any final thoughts?"
 Focus: Be concise, engaging, and adaptable.`;
 
-export async function POST(request: Request) {
+export async function POST(request) {
   try {
     // Parse the FormData from the request
     const formData = await request.formData();

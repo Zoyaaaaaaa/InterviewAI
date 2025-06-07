@@ -1,14 +1,15 @@
-
 import { GoogleAIFileManager } from '@google/generative-ai/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
+import { writeFile, unlink } from 'fs/promises';
 import { join } from 'path';
 import * as os from 'os';
 
 export const maxDuration = 30;
 
 export async function POST(request) {
+  let tempFilePath = null;
+  
   try {
     const formData = await request.formData();
     const pdfFile = formData.get('pdf');
@@ -22,7 +23,7 @@ export async function POST(request) {
 
     // Create a temporary file
     const tempDir = os.tmpdir();
-    const tempFilePath = join(tempDir, pdfFile.name || 'document.pdf');
+    tempFilePath = join(tempDir, `resume_${Date.now()}_${pdfFile.name || 'document.pdf'}`);
 
     // Write the file to the temporary directory
     const bytes = await pdfFile.arrayBuffer();
@@ -40,7 +41,7 @@ export async function POST(request) {
       displayName: pdfFile.name || 'resume',
     });
 
-    // Generate the summary
+    // Generate detailed resume analysis
     const result = await model.generateContent([
       {
         fileData: {
@@ -48,25 +49,63 @@ export async function POST(request) {
           mimeType: uploadResult.file.mimeType,
         },
       },
-      'Extract key information from this resume including skills, experience,projects and education. Format it as a concise profile summary.',
-    ]);
-    console.log(result);
+      `Extract comprehensive information from this resume and format it as structured data:
 
-    // Clean up
-    try {
-      await writeFile(tempFilePath, ''); // Clear the file first
-    } catch (err) {
-      console.error('Error cleaning temporary file:', err);
-    }
+PERSONAL INFORMATION:
+- Name:
+- Contact Information:
+- Location:
+
+PROFESSIONAL SUMMARY:
+- Brief overview of experience and expertise
+
+SKILLS:
+- Technical Skills:
+- Soft Skills:
+- Programming Languages/Tools:
+
+WORK EXPERIENCE:
+- For each role, include: Company, Position, Duration, Key Responsibilities, Major Achievements
+
+EDUCATION:
+- Degree(s), Institution(s), Year(s), Relevant Coursework
+
+PROJECTS:
+- Project names, technologies used, brief description, your role
+
+CERTIFICATIONS:
+- List any relevant certifications
+
+ADDITIONAL INFORMATION:
+- Languages, Volunteer work, Awards, Publications, etc.
+
+Please be thorough and extract as much relevant detail as possible. This will be used to conduct a personalized interview.`,
+    ]);
+
+    const resumeData = result.response.text();
+    console.log('Resume analysis:', resumeData);
 
     return NextResponse.json({
-      summary: result.response.text(),
+      success: true,
+      resumeData: resumeData,
+      message: 'Resume processed successfully'
     });
+
   } catch (error) {
     console.error('Error processing resume:', error);
     return NextResponse.json(
-      { error: 'Failed to process resume' },
+      { error: 'Failed to process resume: ' + error.message },
       { status: 500 }
     );
+  } finally {
+    // Clean up temporary file
+    if (tempFilePath) {
+      try {
+        await unlink(tempFilePath);
+        console.log('Temporary file cleaned up');
+      } catch (cleanupError) {
+        console.error('Error cleaning temporary file:', cleanupError);
+      }
+    }
   }
 }
