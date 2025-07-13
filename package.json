@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@deepgram/sdk": "^4.9.0",
     "@langchain/community": "^0.3.24",
     "@langchain/core": "^0.3.30",
     "@langchain/google-genai": "^0.1.6",
