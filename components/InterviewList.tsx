@@ -2,13 +2,13 @@
 
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Clock, MessageSquare, Calendar, FileText } from 'lucide-react';
+import { MessageSquare, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { formatDate, getConversationPreview } from '@/utils/formatter';
 import FeedbackModal from './FeedbackModal';
-import { InterviewMetrics,InterviewFeedback,Interview,FeedbackStatus } from '@/types/interview';
+import { Interview,FeedbackStatus } from '@/types/interview';
 
 const InterviewList: React.FC = () => {
   const [interviews, setInterviews] = useState<Interview[]>([]);

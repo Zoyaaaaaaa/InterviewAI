@@ -1,0 +1,72 @@
+
+
+Zoya Hassan
++91-8652238658|Rzoyah015@gmail.com| ̄LinkedIn|Github|Portfolio
+Summary
+Computer Science student with9.37 CGPA, skilled infull-stackandbackend development.  Built scalable apps withLLMsand
+RAG systems; passionate about building innovative products and learning new technologies through internships.
+Experience
+Cantilever LabsJune 2025 – Present
+Backend Developer
+•
+DevelopingAI-powered EdTech platformintegrating multipleLLMsfor student progress tracking and personalized learning
+experiences
+•
+ImplementingQdrantDB vector databasefor storing and retrieving multimodal educational content including text, images
+•
+Buildingscalable backend APIssupporting real-time student analytics and AI-driven assessment systems
+AmberFluxDecember 2024 – June 2025
+Backend Developer– LLM Integration Specialist
+•
+Implementedhybrid search in RAG systems, enhancing search accuracy and reducing retrieval latency by15%
+•
+Developed21+ scalable REST APIs, improving system throughput by25%
+•
+Builtmultimodal conversational agentsand virtual bots for voice, text, and visual inputs in applications
+•
+Createdembedding SDKfor vector databases, optimizing AI model integrations across platforms
+•
+Builtmulti-agent workflowswith LangGraph to streamline and automate the SDLC process
+BuildFastWithAIAugust 2024 – November 2024
+Full Stack Developer– AI/EdTech Focus
+•
+Built7+ AI-powered applicationsusingVercel AI SDKandHugging Face APIs, boosting user engagement by20%
+•
+RevampedEdTech platform UI/UXand integrated backend systems withLLM-powered features
+•
+Engineeredmultimodal chatbotswith generative AI, driving a15%increase in website traffic
+Skills
+Programming Languages:Java, Python, JavaScript, C, GoAI/ML Technologies:NLP, RAG, LangChain, Vector Databases
+Frontend Technologies:React.js, Next.js, Tailwind CSS, HTMLBackend Technologies:Node.js, Express.js, FastAPI, OpenCV
+Databases:MongoDB, MySQL, PostgreSQL, Neo4jCloud & DevOps:AWS, GCP, Docker, Git, REST APIs
+Core Subjects:Data Structures, Algorithms, DBMS, OOP, OSSoft Skills:Leadership, Problem Solving, Agile Methodology
+Projects
+DealDetective|Next.js, MongoDB, Gemini APIs|LinkNovember 2024
+•
+Engineeredreal-time product tracking platformwith backend APIs monitoring Amazon pricing trends and email alerts
+•
+IntegratedLLM-powered review analysisusing Gemini APIs to synthesize product feedback and generate purchase
+recommendations
+Edumail|AutoGen, Groq Models, Docker, Streamlit|LinkFebruary 2025
+•
+DevelopedAI-driven email management solutionusingRAG architectureandmulti-agent systemswith OpenAI API
+integration
+•
+Implementedcontext-aware response generatorusing LangChain that personalizes replies based on email content, reducing
+response time by60%
+Breast Cancer Knowledge Graph|Neo4j, LangChain, OpenAI|LinkMay 2025
+•
+Pioneeredclinical knowledge graph explorerusinggraph-based RAGandOpenAI APIsto transform unstructured
+medical documents
+•
+DesignedNLP interfacewith LangChain that converts natural language questions to Cypher queries for precise clinical data
+retrieval
+Achievements & Leadership
+•1st Rank Campus-wideon GeeksforGeeks Coding Leaderboard with700+ problem-solving score
+•Winner, Need For Code 3.0– Developed SteadySteps AI rehabilitation platform (Codestorm)
+•Winner, Codeissance Hackathon– Created TravelEase accessibility-focused solution (CodeTantra)
+•Senior Committee Member, TSEC CodeCell(2022–2025):  Led the organization ofTSEC HACKS, a national-level
+hackathon with400+ participants, and coordinated multiple technical events and coding competitions.
+Education
+Thadomal Shahani College of Engineering (TSEC), Mumbai UniversityMumbai, India
+Bachelor of Engineering in Computer Science —CGPA: 9.372022 – 2026

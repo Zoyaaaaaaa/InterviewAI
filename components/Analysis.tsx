@@ -242,9 +242,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast, Toaster } from 'react-hot-toast';
-import { 
-  Target, BookOpen, Zap, CheckCircle, AlertTriangle,
-  BarChart, PieChart, TrendingUp, MessageSquare,
+import {  CheckCircle, AlertTriangle, TrendingUp, MessageSquare,
   XCircle, ThumbsUp, Award, Brain
 } from 'lucide-react';
 import {
@@ -275,7 +273,7 @@ interface InterviewAnalysis {
 const InterviewDashboard: React.FC = () => {
   const [selectedInterview, setSelectedInterview] = useState<InterviewAnalysis | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
+  const [showSaveConfirmation] = useState(false);
 
   // Fetch the interview data from your API or database (dummy data simulation here)
   useEffect(() => {

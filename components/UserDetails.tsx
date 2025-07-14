@@ -4,13 +4,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
-import { createClient } from '@supabase/supabase-js';
+
 
 // Supabase client initialization
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!, 
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 interface PreferencesData {
   placement_goal: string;

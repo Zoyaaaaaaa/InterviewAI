@@ -11,9 +11,7 @@ import {
   Zap, 
   CheckCircle, 
   AlertTriangle,
-  Clock,
-  MessageSquare,
-  BarChart
+
 } from 'lucide-react';
 import Link from 'next/link';
 import FeedbackOverview from '@/components/FeedbackOverview';
@@ -38,7 +36,7 @@ interface Interview {
 
 const InterviewDashboard = () => {
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
-  const [interviews, setInterviews] = useState<Interview[]>([]);
+  const [, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -167,7 +165,7 @@ const InterviewDashboard = () => {
 
           {/* Preferences Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {preferenceCards.map((card, index) => (
+            {preferenceCards.map((card) => (
               <motion.div
                 key={card.title}
                 initial={{ opacity: 0, y: 20 }}

@@ -249,7 +249,7 @@
 
 import React from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, CheckCircle, Users, Brain, Target, ChevronRight, Sparkles, Award, TargetIcon } from "lucide-react"
+import { ArrowRight, CheckCircle, Users, Brain, Target, ChevronRight, Sparkles} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 

@@ -132,7 +132,7 @@ export async function POST(request: Request) {
       model: groq('llama3-70b-8192'),
       system: getSystemPrompt(resumeData || undefined),
       messages,
-      temperature: 0.3, // Reduced for more focused responses
+      temperature: 0.6, // Reduced for more focused responses
       maxTokens: 150 // Reduced to prevent long responses
     });
 

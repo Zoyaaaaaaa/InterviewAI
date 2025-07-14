@@ -197,7 +197,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface InterviewMetrics {
@@ -236,12 +236,12 @@ const FeedbackModal: React.FC<{
   const formatScore = (score: number) => Math.round(score );
   const feedback = interview.feedback;
 
-  // Prepare metrics data for chart
-  const metricsData = [
-    { name: 'Technical', value: formatScore(feedback.metrics?.technical || 0) },
-    { name: 'Communication', value: formatScore(feedback.metrics?.communication || 0) },
-    { name: 'Confidence', value: formatScore(feedback.metrics?.confidence || 0) },
-  ];
+  // // Prepare metrics data for chart
+  // const metricsData = [
+  //   { name: 'Technical', value: formatScore(feedback.metrics?.technical || 0) },
+  //   { name: 'Communication', value: formatScore(feedback.metrics?.communication || 0) },
+  //   { name: 'Confidence', value: formatScore(feedback.metrics?.confidence || 0) },
+  // ];
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

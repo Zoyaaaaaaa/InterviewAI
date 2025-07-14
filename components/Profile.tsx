@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 interface PreferencesData {
   career_goal: string;
