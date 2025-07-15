@@ -226,7 +226,9 @@ export async function POST(request: Request) {
     const interview_id = data.id;
     console.log("Interview saved successfully with ID:", interview_id);
 
-    const feedbackResponse = await fetch(`http://localhost:3000/api/feedback/${interview_id}`, {
+    // const feedbackResponse = await fetch(`http://localhost:3000/api/feedback/${interview_id}`, {
+      //updated route for production
+      const feedbackResponse = await fetch(`https://interview-ai-umber-alpha.vercel.app/api/feedback/${interview_id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
