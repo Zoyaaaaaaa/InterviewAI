@@ -1,204 +1,10 @@
-
-// 'use client'
-// import React from 'react';
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-// import { ScrollArea } from '@/components/ui/scroll-area';
-
-// interface InterviewMetrics {
-//   confidence: number;
-//   technical: number;
-//   communication: number;
-// }
-
-// interface InterviewFeedback {
-//   overallScore: number;
-//   strengths: string[];
-//   improvements: string[];
-//   metrics?: Partial<InterviewMetrics>;
-//   detailed_feedback: string;
-//   technical_reasoning?:string;
-//   confiedence_reasoning?:string;
-//   communication_reasoning?:string;
-//   overall_reasoning?:string;
-// }
-
-// interface Interview {
-//   id: string;
-//   conversation: string;
-//   created_at: string;
-//   feedback?: InterviewFeedback;
-// }
-
-// const DEFAULT_METRIC_VALUE = 0;
-
-// interface FeedbackModalProps {
-//   interview: Interview | null;
-//   isModalOpen: boolean;
-//   setIsModalOpen: (open: boolean) => void;
-// }
-
-// const FeedbackModal: React.FC<FeedbackModalProps> = ({ interview, isModalOpen, setIsModalOpen }) => {
-//   if (!interview?.feedback) return null;
-
-//   const metrics = interview.feedback.metrics || {};
-  
-//   const metricsData = [
-//     { name: 'Confidence', value: metrics.confidence ?? DEFAULT_METRIC_VALUE },
-//     { name: 'Technical', value: metrics.technical ?? DEFAULT_METRIC_VALUE },
-//     { name: 'Communication', value: metrics.communication ?? DEFAULT_METRIC_VALUE },
-//   ];
-
-//   return (
-//     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-//       <DialogContent className="max-w-4xl max-h-[90vh] bg-gradient-to-b from-gray-900 to-gray-950 overflow-hidden">
-//         <div className="flex flex-col h-full">
-//           <DialogHeader className="mb-4 px-1">
-//             <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-pink-500 text-transparent bg-clip-text">
-//               Interview Feedback Analysis
-//             </DialogTitle>
-//             <DialogDescription className="text-gray-400">
-//               Detailed feedback for your interview performance
-//             </DialogDescription>
-//           </DialogHeader>
-
-//           <ScrollArea className="flex-1 px-1">
-//             <div className="space-y-6 pb-6">
-//               {/* Overall Score */}
-//               <Card className="bg-gradient-to-br from-violet-900 via-purple-900 to-purple-800 shadow-xl border-none">
-//                 <CardHeader>
-//                   <CardTitle className="text-center text-white text-xl">Overall Score</CardTitle>
-//                 </CardHeader>
-//                 <CardContent>
-//                   <div className="text-6xl font-bold text-center text-white">
-//                     {interview.feedback.overallScore}
-//                     <span className="text-3xl text-purple-200 ml-1">/10</span>
-//                   </div>
-//                 </CardContent>
-//               </Card>
-
-//               {/* Metrics Chart */}
-//               {/* {Object.keys(metrics).length > 0 && (
-//                 <Card className="shadow-xl border-gray-800/50 bg-gray-900/50">
-//                   <CardHeader>
-//                     <CardTitle className="text-xl text-purple-100">Performance Metrics</CardTitle>
-//                   </CardHeader>
-//                   <CardContent className="h-64">
-//                     <ResponsiveContainer width="100%" height="100%">
-//                       <LineChart data={metricsData}>
-//                         <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-//                         <XAxis dataKey="name" stroke="#888" />
-//                         <YAxis domain={[0, 10]} stroke="#888" />
-//                         <Tooltip 
-//                           contentStyle={{ 
-//                             backgroundColor: 'rgba(26, 26, 26, 0.95)',
-//                             borderColor: '#444',
-//                             borderRadius: '8px'
-//                           }} 
-//                         />
-//                         <Line 
-//                           type="monotone" 
-//                           dataKey="value" 
-//                           stroke="#a855f7" 
-//                           strokeWidth={3}
-//                           dot={{ 
-//                             fill: '#a855f7',
-//                             strokeWidth: 2,
-//                             r: 5
-//                           }}
-//                         />
-//                       </LineChart>
-//                     </ResponsiveContainer>
-//                   </CardContent>
-//                 </Card>
-//               )} */}
-
-//               {/* Strengths & Improvements */}
-//               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//                 {/* Strengths */}
-//                 <Card className="shadow-xl border-gray-800/50 bg-gray-900/50 h-full">
-//                   <CardHeader>
-//                     <CardTitle className="text-emerald-400 text-xl flex items-center gap-2">
-//                       <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-//                       Strengths
-//                     </CardTitle>
-//                   </CardHeader>
-//                   <CardContent>
-//                     <div className="max-h-60 overflow-y-auto pr-3">
-//                       <ul className="space-y-2">
-//                         {interview.feedback.strengths.map((strength, index) => (
-//                           <li 
-//                             key={index} 
-//                             className="text-gray-300 text-sm p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-colors"
-//                           >
-//                             <span className="text-emerald-400 mr-2">•</span>
-//                             {strength}
-//                           </li>
-//                         ))}
-//                       </ul>
-//                     </div>
-//                   </CardContent>
-//                 </Card>
-
-//                 {/* Improvements */}
-//                 <Card className="shadow-xl border-gray-800/50 bg-gray-900/50 h-full">
-//                   <CardHeader>
-//                     <CardTitle className="text-orange-400 text-xl flex items-center gap-2">
-//                       <span className="w-2 h-2 rounded-full bg-orange-400"></span>
-//                       Areas for Improvement
-//                     </CardTitle>
-//                   </CardHeader>
-//                   <CardContent>
-//                     <div className="max-h-60 overflow-y-auto pr-3">
-//                       <ul className="space-y-2">
-//                         {interview.feedback.improvements.map((improvement, index) => (
-//                           <li 
-//                             key={index} 
-//                             className="text-gray-300 text-sm p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-colors"
-//                           >
-//                             <span className="text-orange-400 mr-2">•</span>
-//                             {improvement}
-//                           </li>
-                          
-//                         ))}
-//                       </ul>
-//                     </div>
-//                   </CardContent>
-//                 </Card>
-//               </div>
-
-//               {/* Detailed Feedback */}
-//               {/* {interview.feedback.detailed_feedback && (
-//                 <Card className="shadow-xl border-gray-800/50 bg-gray-900/50">
-//                   <CardHeader>
-//                     <CardTitle className="text-xl text-purple-100">Detailed Feedback</CardTitle>
-//                   </CardHeader>
-//                   <CardContent>
-//                     <div className="max-h-60 overflow-y-auto pr-3">
-//                       <p className="text-gray-300 text-sm whitespace-pre-line leading-relaxed">
-//                         {interview.feedback.detailed_feedback}
-//                       </p>
-//                     </div>
-//                   </CardContent>
-//                 </Card>
-//               )} */}
-//             </div>
-//           </ScrollArea>
-//         </div>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
-
-// export default FeedbackModal;
-
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Share2, Copy, Download, Star, TrendingUp, AlertCircle, FileText, Check } from 'lucide-react';
 
 interface InterviewMetrics {
   confidence: number;
@@ -230,131 +36,364 @@ const FeedbackModal: React.FC<{
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
 }> = ({ interview, isModalOpen, setIsModalOpen }) => {
+  const [copied, setCopied] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+
   if (!interview?.feedback) return null;
 
-  // Process feedback data for display
-  const formatScore = (score: number) => Math.round(score );
+  const formatScore = (score: number) => Math.round(score);
   const feedback = interview.feedback;
 
-  // // Prepare metrics data for chart
-  // const metricsData = [
-  //   { name: 'Technical', value: formatScore(feedback.metrics?.technical || 0) },
-  //   { name: 'Communication', value: formatScore(feedback.metrics?.communication || 0) },
-  //   { name: 'Confidence', value: formatScore(feedback.metrics?.confidence || 0) },
-  // ];
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Generate shareable content
+  const generateShareableContent = () => {
+    const content = `🎯 Interview Feedback Report
+
+📅 Date: ${formatDate(interview.created_at)}
+⭐ Overall Score: ${formatScore(feedback.overallScore)}/10
+
+💪 Strengths:
+${feedback.strengths.map(strength => `• ${strength}`).join('\n')}
+
+🎯 Areas for Improvement:
+${feedback.improvements.map(improvement => `• ${improvement}`).join('\n')}
+
+📝 Detailed Feedback:
+${feedback.detailed_feedback}
+
+${feedback.overall_reasoning ? `\n🔍 Overall Assessment:\n${feedback.overall_reasoning}` : ''}
+
+Generated by Interview Practice Platform`;
+    
+    return content;
+  };
+
+  // Copy to clipboard
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(generateShareableContent());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  // Download as text file
+  const downloadFeedback = () => {
+    const content = generateShareableContent();
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `interview-feedback-${interview.id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Share via Web Share API (if supported)
+  const shareViaWebAPI = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Interview Feedback Report',
+          text: generateShareableContent(),
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      // Fallback to copy
+      copyToClipboard();
+    }
+  };
+
+  // Get score color based on value
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return 'text-green-400';
+    if (score >= 6) return 'text-yellow-400';
+    return 'text-red-400';
+  };
+
+  // Get progress bar color
+  const getProgressColor = (score: number) => {
+    if (score >= 8) return 'bg-green-500';
+    if (score >= 6) return 'bg-yellow-500';
+    return 'bg-red-500';
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent className="max-w-4xl max-h-[90vh] bg-gradient-to-b from-gray-900 to-gray-950 overflow-hidden">
-        <div className="flex flex-col h-full">
-          <DialogHeader className="mb-4 px-1">
-            <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-pink-500 text-transparent bg-clip-text">
-              Interview Feedback Analysis
-            </DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Detailed feedback for your interview performance
-            </DialogDescription>
-          </DialogHeader>
+      <DialogContent className="max-w-5xl h-[95vh] bg-gradient-to-b from-gray-900 to-gray-950 p-0 flex flex-col">
+        {/* Fixed Header */}
+        <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b border-gray-800/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-pink-500 text-transparent bg-clip-text mb-2">
+                Interview Feedback Analysis
+              </DialogTitle>
+              <DialogDescription className="text-gray-400">
+                {formatDate(interview.created_at)} • Interview ID: {interview.id}
+              </DialogDescription>
+            </div>
+            
+            {/* Share Button */}
+            <div className="relative">
+              <Button
+                onClick={() => setShareMenuOpen(!shareMenuOpen)}
+                variant="outline"
+                className="bg-purple-600/20 border-purple-500/30 hover:bg-purple-600/30 text-purple-300"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+              
+              {shareMenuOpen && (
+                <div className="absolute right-0 top-12 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-10 min-w-48">
+                  <div className="py-2">
+                    <button
+                      onClick={copyToClipboard}
+                      className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center"
+                    >
+                      {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                      {copied ? 'Copied!' : 'Copy to Clipboard'}
+                    </button>
+                    <button
+                      onClick={downloadFeedback}
+                      className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download as File
+                    </button>
+                    <button
+                      onClick={shareViaWebAPI}
+                      className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center"
+                    >
+                      <Share2 className="w-4 h-4 mr-2" />
+                      Share via System
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogHeader>
 
-          <ScrollArea className="flex-1 px-1">
-            <div className="space-y-6 pb-6">
+        {/* Scrollable Content Container */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full">
+            <div className="p-6 space-y-6">
               {/* Overall Score */}
               <Card className="bg-gradient-to-br from-violet-900 via-purple-900 to-purple-800 shadow-xl border-none">
-                <CardHeader>
-                  <CardTitle className="text-center text-white text-xl">Overall Score</CardTitle>
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-center text-white text-xl flex items-center justify-center gap-2">
+                    <Star className="w-6 h-6" />
+                    Overall Score
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <div className="text-6xl font-bold text-white">
+                  <div className={`text-6xl font-bold mb-4 ${getScoreColor(feedback.overallScore)}`}>
                     {formatScore(feedback.overallScore)}
                     <span className="text-3xl text-purple-200 ml-1">/10</span>
                   </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-700 rounded-full h-3 mb-4">
+                    <div 
+                      className={`h-3 rounded-full transition-all duration-1000 ${getProgressColor(feedback.overallScore)}`}
+                      style={{ width: `${(feedback.overallScore / 10) * 100}%` }}
+                    />
+                  </div>
+                  
                   {feedback.overall_reasoning && (
-                    <p className="text-gray-200 text-sm mt-2 max-w-2xl mx-auto">
+                    <p className="text-gray-200 text-sm max-w-2xl mx-auto leading-relaxed">
                       {feedback.overall_reasoning}
                     </p>
                   )}
                 </CardContent>
               </Card>
-              
+
+              {/* Metrics Cards */}
+              {feedback.metrics && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {feedback.metrics.technical !== undefined && (
+                    <Card className="bg-gray-900/50 border-gray-800/50">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-blue-400 mb-1">
+                          {formatScore(feedback.metrics.technical)}/10
+                        </div>
+                        <div className="text-sm text-gray-400">Technical Skills</div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  
+                  {feedback.metrics.communication !== undefined && (
+                    <Card className="bg-gray-900/50 border-gray-800/50">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-green-400 mb-1">
+                          {formatScore(feedback.metrics.communication)}/10
+                        </div>
+                        <div className="text-sm text-gray-400">Communication</div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  
+                  {feedback.metrics.confidence !== undefined && (
+                    <Card className="bg-gray-900/50 border-gray-800/50">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-purple-400 mb-1">
+                          {formatScore(feedback.metrics.confidence)}/10
+                        </div>
+                        <div className="text-sm text-gray-400">Confidence</div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              )}
 
               {/* Strengths & Improvements */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Strengths */}
                 <Card className="shadow-xl border-gray-800/50 bg-gray-900/50">
-                  <CardHeader>
+                  <CardHeader className="pb-4">
                     <CardTitle className="text-emerald-400 text-xl flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                      <TrendingUp className="w-5 h-5" />
                       Strengths
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 max-h-60 overflow-y-auto pr-3">
-                      {feedback.strengths.length > 0 ? (
-                        feedback.strengths.map((strength, index) => (
-                          <li 
-                            key={index} 
-                            className="text-gray-300 text-sm p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-colors"
-                          >
-                            <span className="text-emerald-400 mr-2">•</span>
-                            {strength}
-                          </li>
-                        ))
-                      ) : (
-                        <li className="text-gray-400 text-sm p-3">No strengths noted</li>
-                      )}
-                    </ul>
+                    <div className="max-h-60 overflow-y-auto">
+                      <div className="space-y-3 pr-3">
+                        {feedback.strengths.length > 0 ? (
+                          feedback.strengths.map((strength, index) => (
+                            <div 
+                              key={index} 
+                              className="text-gray-300 text-sm p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-colors border-l-4 border-emerald-400"
+                            >
+                              <span className="text-emerald-400 mr-2">✓</span>
+                              {strength}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-gray-400 text-sm p-3">No strengths noted</div>
+                        )}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
 
                 {/* Improvements */}
                 <Card className="shadow-xl border-gray-800/50 bg-gray-900/50">
-                  <CardHeader>
+                  <CardHeader className="pb-4">
                     <CardTitle className="text-orange-400 text-xl flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-orange-400"></span>
+                      <AlertCircle className="w-5 h-5" />
                       Areas for Improvement
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 max-h-60 overflow-y-auto pr-3">
-                      {feedback.improvements.length > 0 ? (
-                        feedback.improvements.map((improvement, index) => (
-                          <li 
-                            key={index} 
-                            className="text-gray-300 text-sm p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-colors"
-                          >
-                            <span className="text-orange-400 mr-2">•</span>
-                            {improvement}
-                          </li>
-                        ))
-                      ) : (
-                        <li className="text-gray-400 text-sm p-3">No improvement areas noted</li>
-                      )}
-                    </ul>
+                    <div className="max-h-60 overflow-y-auto">
+                      <div className="space-y-3 pr-3">
+                        {feedback.improvements.length > 0 ? (
+                          feedback.improvements.map((improvement, index) => (
+                            <div 
+                              key={index} 
+                              className="text-gray-300 text-sm p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-colors border-l-4 border-orange-400"
+                            >
+                              <span className="text-orange-400 mr-2">⚠</span>
+                              {improvement}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-gray-400 text-sm p-3">No improvement areas noted</div>
+                        )}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
 
               {/* Detailed Feedback */}
-              {/* <Card className="shadow-xl border-gray-800/50 bg-gray-900/50">
-                <CardHeader>
-                  <CardTitle className="text-xl text-purple-100">Detailed Feedback</CardTitle>
+              <Card className="shadow-xl border-gray-800/50 bg-gray-900/50">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl text-purple-100 flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Detailed Feedback
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="max-h-96 overflow-y-auto pr-3">
-                    {feedback.detailed_feedback ? (
-                      <div className="text-gray-300 text-sm whitespace-pre-line leading-relaxed">
-                        {feedback.detailed_feedback.split('\n').map((paragraph, i) => (
-                          <p key={i} className="mb-3 last:mb-0">
-                            {paragraph}
-                          </p>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-400 text-sm">No detailed feedback provided</p>
-                    )}
+                  <div className="max-h-80 overflow-y-auto">
+                    <div className="pr-3">
+                      {feedback.detailed_feedback ? (
+                        <div className="text-gray-300 text-sm leading-relaxed">
+                          {feedback.detailed_feedback.split('\n').map((paragraph, i) => (
+                            <p key={i} className="mb-4 last:mb-0">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-400 text-sm">No detailed feedback provided</p>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
-              </Card> */}
+              </Card>
+
+              {/* Additional Reasoning Sections */}
+              {(feedback.technical_reasoning || feedback.communication_reasoning || feedback.confidence_reasoning) && (
+                <div className="grid grid-cols-1 gap-4">
+                  {feedback.technical_reasoning && (
+                    <Card className="bg-gray-900/50 border-gray-800/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-blue-400 text-lg">Technical Assessment</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {feedback.technical_reasoning}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                  
+                  {feedback.communication_reasoning && (
+                    <Card className="bg-gray-900/50 border-gray-800/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-green-400 text-lg">Communication Assessment</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {feedback.communication_reasoning}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                  
+                  {feedback.confidence_reasoning && (
+                    <Card className="bg-gray-900/50 border-gray-800/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-purple-400 text-lg">Confidence Assessment</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {feedback.confidence_reasoning}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              )}
             </div>
           </ScrollArea>
         </div>

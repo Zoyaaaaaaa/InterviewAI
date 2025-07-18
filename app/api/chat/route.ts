@@ -1,53 +1,4 @@
-// import { streamText } from 'ai';
-// import { createOpenAI as createGroq } from '@ai-sdk/openai';
-// import { NextResponse } from 'next/server';
 
-// const groq = createGroq({
-//   baseURL: 'https://api.groq.com/openai/v1',
-//   apiKey: process.env.GROQ_API_KEY,
-// });
-
-// export const maxDuration = 30;
-
-// const getSystemPrompt = (resumeData?: string) => {
-//   let prompt = `You are a professional technical interviewer conducting a job interview. Your role is to ask relevant questions based on the candidate's resume and their responses.
-
-// Interview Guidelines:
-// 1. Start with a brief introduction: "Hello! Let's begin the interview. Could you please introduce yourself?"
-// 2. Ask 1-2 general questions about their background
-// 3. Focus most questions (4-5) on their specific skills and experiences from their resume
-// 4. Ask follow-up questions based on their answers
-// 5. Keep questions concise and clear
-// 6. End after 6-8 questions with: "Thank you for your time. Do you have any questions for us?"
-
-// Tone: Professional but friendly. Be specific with your questions based on their resume.`;
-
-//   if (resumeData) {
-//     prompt += `\n\nCandidate Resume Summary:\n${resumeData}\n\nUse this information to ask specific, relevant questions about their experience and skills.`;
-//   }
-
-//   return prompt;
-// };
-
-// export async function POST(req: Request) {
-//   try {
-//     const { messages, resumeData } = await req.json();
-    
-//     const result = await streamText({
-//       model: groq('llama-3.3-70b-versatile'),
-//       system: getSystemPrompt(resumeData || undefined),
-//       messages,
-//     });
-
-//     return result.toDataStreamResponse();
-//   } catch (error) {
-//     console.error('Error in chat API:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to process chat request' },
-//       { status: 500 }
-//     );
-//   }
-// }
 
 import { streamText } from 'ai';
 import { createOpenAI as createGroq } from '@ai-sdk/openai';
@@ -140,8 +91,8 @@ export async function POST(req: Request) {
       model: groq('llama-3.3-70b-versatile'),
       system: getSystemPrompt(resumeData || undefined),
       messages,
-      temperature: 0.7, // Slightly creative but focused
-      maxTokens: 500, // Keep responses concise
+      temperature: 0.7,
+      maxTokens: 500, 
     });
 
     return result.toDataStreamResponse();

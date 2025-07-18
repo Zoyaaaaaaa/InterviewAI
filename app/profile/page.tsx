@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { toast, Toaster } from 'react-hot-toast';
 import { 
   Target, 
   Briefcase, 
@@ -11,11 +10,13 @@ import {
   Zap, 
   CheckCircle, 
   AlertTriangle,
-
+  Edit3,
+  User
 } from 'lucide-react';
 import Link from 'next/link';
 import FeedbackOverview from '@/components/FeedbackOverview';
 import InterviewList from '@/components/InterviewList';
+import { Toaster } from 'react-hot-toast';
 
 interface PreferencesData {
   placement_goal: string;
@@ -33,6 +34,14 @@ interface Interview {
   transcript: string;
   created_at: string;
 }
+
+const formatPreferenceValue = (value: string) => {
+  if (!value) return 'Not set';
+  return value
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 const InterviewDashboard = () => {
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
@@ -84,14 +93,24 @@ const InterviewDashboard = () => {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
+        
+        console.log("Response status:", response.status);
+        console.log("Response ok:", response.ok);
 
-        if (!response.ok) throw new Error('Failed to fetch preferences.');
-
-        const preferencesData = await response.json();
-        if (preferencesData?.length > 0) {
-          setPreferences(preferencesData[0]);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch preferences: ${response.status}`);
         }
 
+        const result = await response.json();
+        console.log("API Response:", result);
+
+        if (result.data) {
+          setPreferences(result.data);
+          console.log("Preferences set:", result.data);
+        } else {
+          console.log("No preferences data found");
+          setPreferences(null);
+        }
         setInterviews([{
           id: '123e4567-e89b-12d3-a456-426614174000',
           start_time: Date.now() - 3600000,
@@ -101,9 +120,9 @@ const InterviewDashboard = () => {
           transcript: 'Interview covered data structures, algorithms, and system design...',
           created_at: new Date().toISOString()
         }]);
-      } catch (err) {
-        setError('An error occurred while loading data.');
-        toast.error('Failed to load dashboard data.');
+      } catch (err: any) {
+        console.error('Error fetching data:', err);
+        setError(err.message || 'An error occurred while loading data.');
       } finally {
         setLoading(false);
       }
@@ -144,41 +163,85 @@ const InterviewDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.div {...fadeInUp} className="space-y-12">
           {/* Header Section */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 text-transparent bg-clip-text">
-              Your Interview Dashboard
-            </h1>
-            <Link href="/interview">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-3 rounded-lg font-semibold text-white shadow-lg shadow-purple-500/25 w-full sm:w-auto"
-              >
-                Start New Interview
-              </motion.button>
-            </Link>
+            <div className="flex items-center gap-3">
+              <User className="text-purple-400" size={32} />
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 text-transparent bg-clip-text">
+                Your Interview Dashboard
+              </h1>
+            </div>
+            <div className="flex gap-3">
+              <Link href="/preferences">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium text-white transition-colors flex items-center gap-2"
+                >
+                  <Edit3 size={16} />
+                  Edit Preferences
+                </motion.button>
+              </Link>
+              <Link href="/interview">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-3 rounded-lg font-semibold text-white shadow-lg shadow-purple-500/25"
+                >
+                  Start New Interview
+                </motion.button>
+              </Link>
+            </div>
           </div>
 
+          {/* Preferences Status */}
+          {!preferences && (
+            <motion.div 
+              {...fadeInUp}
+              className="bg-yellow-900/20 border border-yellow-500/30 rounded-xl p-6 text-center"
+            >
+              <AlertTriangle className="mx-auto mb-4 text-yellow-500" size={48} />
+              <h2 className="text-xl font-semibold text-yellow-400 mb-2">
+                No Preferences Set
+              </h2>
+              <p className="text-yellow-300 mb-4">
+                Set your placement preferences to get personalized interview recommendations.
+              </p>
+              <Link href="/preferences">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-yellow-600 hover:bg-yellow-700 px-6 py-3 rounded-lg font-semibold text-white transition-colors"
+                >
+                  Set Preferences Now
+                </motion.button>
+              </Link>
+            </motion.div>
+          )}
+
           {/* Preferences Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {preferenceCards.map((card) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: card.delay }}
-                className={`bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 border border-${card.color}-500/20 hover:border-${card.color}-500/40 transition-all group`}
-              >
-                <card.icon className={`text-${card.color}-400 mb-3 group-hover:scale-110 transition-transform`} size={32} />
-                <h2 className={`text-lg font-semibold text-${card.color}-300 mb-2`}>{card.title}</h2>
-                <p className="text-gray-300">{card.value || 'Not set'}</p>
-              </motion.div>
-            ))}
-          </div>
+          {preferences && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {preferenceCards.map((card) => (
+                <motion.div
+                  key={card.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: card.delay }}
+                  className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all group"
+                >
+                  <card.icon className="text-purple-400 mb-3 group-hover:scale-110 transition-transform" size={32} />
+                  <h2 className="text-lg font-semibold text-gray-200 mb-2">{card.title}</h2>
+                  <p className="text-gray-300 font-medium">
+                    {formatPreferenceValue(card.value || '')}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
           {/* Feedback Overview */}
           <motion.div {...fadeInUp} transition={{ delay: 0.5 }}>

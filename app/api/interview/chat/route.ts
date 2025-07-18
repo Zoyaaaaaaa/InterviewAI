@@ -1,73 +1,3 @@
-// import { streamText } from 'ai';
-// import { createOpenAI as createGroq } from '@ai-sdk/openai';
-// import { NextResponse } from 'next/server';
-
-// const groq = createGroq({
-//   baseURL: 'https://api.groq.com/openai/v1',
-//   apiKey: process.env.GROQ_API_KEY,
-// });
-
-// export const maxDuration = 30;
-
-// const getSystemPrompt = (resumeData?: string) => {
-//   let prompt = `You are an experienced technical interviewer conducting a job interview.`;
-  
-//   if (resumeData) {
-//     prompt += `\n\nCandidate Resume Summary:\n${resumeData}`;
-//   }
-  
-//   prompt += `\n\nGuidelines:
-// - Ask relevant technical questions based on the resume
-// - Keep questions concise (1-2 sentences)
-// - Maintain professional tone
-// - Adapt follow-up questions based on responses`;
-
-//   return prompt;
-// };
-
-// export async function POST(request: Request) {
-//   try {
-//     const formData = await request.formData();
-//     const message = formData.get('message')?.toString();
-//     const conversation = formData.get('conversation')?.toString();
-//     const resumeData = formData.get('resume')?.toString();
-
-//     const messages = conversation ? JSON.parse(conversation) : [];
-    
-//     if (message) {
-//       messages.push({ role: 'user', content: message });
-//     }
-
-//     const result = await streamText({
-//       model: groq('llama3-70b-8192'),
-//       system: getSystemPrompt(resumeData || undefined),
-//       messages,
-//       temperature: 0.7,
-//       maxTokens: 200
-//     });
-
-//     let response = '';
-//     for await (const chunk of result.textStream) {
-//       response += chunk;
-//     }
-
-//     return NextResponse.json({
-//       success: true,
-//       response: response.trim()
-//     });
-
-//   } catch (error) {
-//     console.error('Error in chat API:', error);
-//     return NextResponse.json(
-//       { 
-//         success: false,
-//         error: 'Failed to process chat request',
-//         details: error instanceof Error ? error.message : String(error)
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
 import { streamText } from 'ai';
 import { createOpenAI as createGroq } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
@@ -95,8 +25,9 @@ IMPORTANT RULES:
 - Do NOT provide explanations or summaries of their answers
 - Move to the next question immediately after they respond
 - Track question count internally - stop after 5-6 questions
-- Be direct and professional
-- Focus on problem-solving and real-world application`;
+- Focus on problem-solving and real-world application
+- Make it professional and engaging, but still professional and to the point.
+`;
   
   if (resumeData) {
     prompt += `\n\nCandidate Resume Summary:\n${resumeData}`;
@@ -129,11 +60,11 @@ export async function POST(request: Request) {
     }
 
     const result = await streamText({
-      model: groq('llama3-70b-8192'),
+      model: groq('llama-3.3-70b-versatile'),
       system: getSystemPrompt(resumeData || undefined),
       messages,
-      temperature: 0.6, // Reduced for more focused responses
-      maxTokens: 150 // Reduced to prevent long responses
+      temperature: 0.7, 
+      maxTokens: 350 
     });
 
     let response = '';
