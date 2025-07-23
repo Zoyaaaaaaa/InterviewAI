@@ -6,17 +6,6 @@
   Empowering students to crack interviews through AI-driven personalization and comprehensive mock interviews.
 </p>
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#how-interviewai-works"><strong>How It Works</strong></a> ·
-  <a href="#system-architecture-diagram"><strong>Architecture</strong></a> ·
-  <a href="#getting-started"><strong>Getting Started</strong></a> ·
-  <a href="#technology-stack"><strong>Tech Stack</strong></a> ·
-  <a href="#future-roadmap"><strong>Roadmap</strong></a>
-</p>
-
-<br/>
-
 ---
 
 ## 🎯 Mission Statement
@@ -74,25 +63,8 @@ InterviewAI democratizes interview coaching by providing every student with acce
 
 ## 🧩 System Architecture Diagram
 
-> Understand how InterviewAI flows from user input to AI-generated performance feedback.
+> **This section shows the technical architecture behind InterviewAI – how various components interact from input to feedback.**
 
-You can place your architecture image here when it's ready.
+<img width="1600" height="893" alt="image" src="https://github.com/user-attachments/assets/e1ac3cb0-219f-41ae-96da-73d7e58732ec" />
 
----
-
-## 🛠️ Technology Stack
-
-### Core
-- **Next.js** – Full-stack React framework
-- **TypeScript + Zod** – Typed validation
-- **Vercel AI SDK** – AI API integration
-
-### AI & Voice
-- **OpenAI** – Question generation, answer evaluation
-- **Deepgram** – Voice transcription, tone & filler analysis
-- **Murf** – AI interviewer voice synthesis
-
-### Hosting
-- **Vercel** – Edge deployments
-- **Supabase (optional)** – If storing user progress or history
 
