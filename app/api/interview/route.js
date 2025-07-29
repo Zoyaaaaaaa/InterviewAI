@@ -104,6 +104,7 @@ export async function POST(request) {
 
     // Generate questions with Groq
     console.log('Generating interview questions with Groq...');
+     console.log(resumeData)
     const groqResult = await streamText({
       model: groq('llama3-70b-8192'),
       system: systemPrompt,

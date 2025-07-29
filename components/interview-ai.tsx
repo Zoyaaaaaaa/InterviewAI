@@ -1,5 +1,4 @@
 "use client"
-
 import type React from "react"
 import { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
@@ -21,8 +20,11 @@ import {
   Check,
   User,
   Brain,
+  Briefcase,
+  X,
 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Textarea } from "@/components/ui/textarea"
 
 interface InterviewMessage {
   role: string
@@ -38,15 +40,25 @@ interface ResumeData {
   uploadDate: number
 }
 
+interface JobDescriptionData {
+  content: string
+  source: 'manual' | 'file'
+}
+
 const InterviewAI: React.FC = () => {
   const [isCameraSharing, setIsCameraSharing] = useState<boolean>(false)
   const [isInterviewerSpeaking, setIsInterviewerSpeaking] = useState<boolean>(false)
   const [selectedVoice] = useState<string>("aura-orpheus-en")
-  const [showPopup, setShowPopup] = useState(false)
+  const [showResumePopup, setShowResumePopup] = useState(false)
+  const [, setShowPopup] = useState(false);
+  const [showJobDescPopup, setShowJobDescPopup] = useState(false)
   const [resumeData, setResumeData] = useState<ResumeData | null>(null)
+  const [jobDescriptionData, setJobDescriptionData] = useState<JobDescriptionData | null>(null)
+  const [manualJobDescription, setManualJobDescription] = useState<string>("")
   const [isUploading, setIsUploading] = useState(false)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const jobDescFileInputRef = useRef<HTMLInputElement | null>(null)
   const recordRef = useRef<any | null>(null)
   const [isRecording, setIsRecording] = useState<boolean>(false)
   const [isRecordingComplete, setIsRecordingComplete] = useState<boolean>(true)
@@ -199,6 +211,9 @@ const InterviewAI: React.FC = () => {
         if (resumeData) {
           formData.append("resume", resumeData.content)
         }
+        if (jobDescriptionData) {
+          formData.append("jobDescription", jobDescriptionData.content)
+        }
 
         const response = await fetch("/api/interview/chat", {
           method: "POST",
@@ -233,7 +248,7 @@ const InterviewAI: React.FC = () => {
         await handleTextToVoice(fallbackMessage.content)
       }
     },
-    [handleTextToVoice, resumeData, messages, showAlert],
+    [handleTextToVoice, resumeData, jobDescriptionData, messages, showAlert],
   )
 
   const handleSaveConversation = async () => {
@@ -243,9 +258,6 @@ const InterviewAI: React.FC = () => {
     try {
       await saveConversation()
       setSaveSuccess(true)
-      setTimeout(() => {
-        router.push("/profile")
-      }, 1500)
     } catch (error) {
       console.error("Failed to save conversation:", error)
       setIsSaving(false)
@@ -266,6 +278,7 @@ const InterviewAI: React.FC = () => {
         body: JSON.stringify({
           messages,
           resumeData,
+          jobDescriptionData,
           timestamp: Date.now(),
           duration: Date.now() - (messages[0]?.timestamp || Date.now()),
         }),
@@ -273,72 +286,192 @@ const InterviewAI: React.FC = () => {
       if (!response.ok) {
         throw new Error("Save API call failed")
       }
-      const data = await response.json()
-      showAlert("success", "Success!", `Interview saved successfully! Session ID: ${data.sessionId}`)
+      //const data = await response.json()
+      showAlert("success", "Success!", `Interview saved successfully!`)
+      setTimeout(() => {
+        router.push("/profile")
+      }, 1000)
     } catch (error) {
       console.error("Save error:", error)
       showAlert("error", "Save Failed", "Failed to save interview. Please try again.")
     }
   }
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  const handleFileUpload = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0]
-      if (!file) return
+    if (!file.type.includes('pdf')) {
+      showAlert('error', 'Invalid File Type', 'Please upload a PDF file.');
+      return;
+    }
 
-      if (!file.type.includes("pdf")) {
-        showAlert("error", "Invalid File Type", "Please upload a PDF file.")
-        return
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showAlert('error', 'File Too Large', 'Please upload a file smaller than 5MB.');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('pdf', file);
+
+      const response = await fetch('/api/interview/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+      
+      const data = await response.json();
+      
+      const newResumeData: ResumeData = {
+        fileName: file.name,
+        content: JSON.stringify(data.resumeSummary),
+        fileSize: file.size,
+        uploadDate: Date.now()
+      };
+      
+      setResumeData(newResumeData);
+      setShowPopup(false);
+      setIsUploading(false);
+      showAlert('success', 'Upload Successful', 'Resume processed successfully!');
+      
+    } catch (error) {
+      setIsUploading(false);
+      showAlert('error', 'Upload Failed', 'Failed to process the file. Please try again.');
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [showAlert]);
+const handleJobDescriptionUpload = useCallback(
+  async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain'
+    ];
+    
+    if (!validTypes.some(type => file.type.includes(type))) {
+      showAlert("error", "Invalid File Type", "Please upload a PDF, DOCX, or TXT file.");
+      return;
+    }
+
+    // Validate file size (5MB max)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showAlert("error", "File Too Large", "Please upload a file smaller than 5MB.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/interview/process-job-description", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Upload failed");
       }
 
-      const maxSize = 5 * 1024 * 1024
-      if (file.size > maxSize) {
-        showAlert("error", "File Too Large", "Please upload a file smaller than 5MB.")
-        return
+      const { content } = await response.json();
+
+      const newJobDescData: JobDescriptionData = {
+        content: content, 
+        source: 'file',
+      };
+
+      setJobDescriptionData(newJobDescData);
+      setShowJobDescPopup(false);
+      showAlert("success", "Upload Successful", "Job description processed successfully!");
+    } catch (error) {
+      console.error("Job description processing error:", error);
+      showAlert(
+        "error", 
+        "Upload Failed", 
+        error instanceof Error ? error.message : "Failed to process the file. Please try again."
+      );
+    } finally {
+      setIsUploading(false);
+      if (jobDescFileInputRef.current) {
+        jobDescFileInputRef.current.value = "";
       }
+    }
+  },
+  [showAlert]
+);
 
-      setIsUploading(true)
-      try {
-        const formData = new FormData()
-        formData.append("pdf", file)
-        const response = await fetch("/api/interview/upload", {
-          method: "POST",
-          body: formData,
-        })
-        if (!response.ok) throw new Error("Upload failed")
+const handleManualJobDescriptionSubmit = useCallback(async () => {
+  if (!manualJobDescription.trim()) {
+    showAlert("error", "Error", "Please enter a job description");
+    return;
+  }
 
-        const data = await response.json()
+  setIsUploading(true);
+  try {
+    const formData = new FormData();
+    formData.append("text", manualJobDescription);
 
-        const newResumeData: ResumeData = {
-          fileName: file.name,
-          content: JSON.stringify(data.resumeSummary),
-          fileSize: file.size,
-          uploadDate: Date.now(),
-        }
+    const response = await fetch("/api/interview/process-job-description", {
+      method: "POST",
+      body: formData,
+    });
 
-        setResumeData(newResumeData)
-        setShowPopup(false)
-        setIsUploading(false)
-        showAlert("success", "Upload Successful", "Resume processed successfully!")
-      } catch (error) {
-        setIsUploading(false)
-        showAlert("error", "Upload Failed", "Failed to process the file. Please try again.")
-      }
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
-    },
-    [showAlert],
-  )
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Processing failed");
+    }
+
+    const { content } = await response.json();
+
+    const newJobDescData: JobDescriptionData = {
+      content: content, // Use the processed content
+      source: 'manual',
+    };
+
+    setJobDescriptionData(newJobDescData);
+    setShowJobDescPopup(false);
+    showAlert("success", "Success", "Job description added successfully");
+  } catch (error) {
+    console.error("Job description processing error:", error);
+    showAlert(
+      "error", 
+      "Processing Failed", 
+      error instanceof Error ? error.message : "Failed to process the description. Please try again."
+    );
+  } finally {
+    setIsUploading(false);
+    setManualJobDescription("");
+  }
+}, [manualJobDescription, showAlert]);
+
 
   useEffect(() => {
-    if (resumeData && messages.length === 0) {
+    if ((resumeData || jobDescriptionData) && messages.length === 0) {
       const initialQuestion = async () => {
         try {
           const formData = new FormData()
-          formData.append("resume", resumeData.content)
+          if (resumeData) {
+            formData.append("resume", resumeData.content)
+          }
+          if (jobDescriptionData) {
+            formData.append("jobDescription", jobDescriptionData.content)
+          }
           // Add an empty conversation array to satisfy the API requirements
           formData.append("conversation", JSON.stringify([]))
+          
           const response = await fetch("/api/interview/chat", {
             method: "POST",
             body: formData,
@@ -370,7 +503,7 @@ const InterviewAI: React.FC = () => {
       }
       initialQuestion()
     }
-  }, [resumeData, handleTextToVoice])
+  }, [resumeData, jobDescriptionData, handleTextToVoice])
 
   const stopCameraSharing = useCallback((): void => {
     if (stream) {
@@ -508,6 +641,14 @@ const InterviewAI: React.FC = () => {
     fileInputRef.current?.click()
   }
 
+  const triggerJobDescFileUpload = () => {
+    jobDescFileInputRef.current?.click()
+  }
+
+  const removeJobDescription = () => {
+    setJobDescriptionData(null)
+    showAlert("success", "Removed", "Job description has been removed")
+  }
 
   // Cleanup on unmount
   useEffect(() => {
@@ -540,12 +681,19 @@ const InterviewAI: React.FC = () => {
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-950/10 via-transparent to-purple-950/5 pointer-events-none" />
 
-      {/* Hidden file input */}
+      {/* Hidden file inputs */}
       <input
         ref={fileInputRef}
         type="file"
         accept=".pdf,.doc,.docx,.txt"
         onChange={handleFileUpload}
+        className="hidden"
+      />
+      <input
+        ref={jobDescFileInputRef}
+        type="file"
+        accept=".pdf,.doc,.docx,.txt"
+        onChange={handleJobDescriptionUpload}
         className="hidden"
       />
 
@@ -572,7 +720,6 @@ const InterviewAI: React.FC = () => {
           </Alert>
         </div>
       )}
-
 
       <div className="flex-1 max-w-7xl mx-auto w-full p-6">
         <div className="grid lg:grid-cols-2 gap-6 h-full">
@@ -621,6 +768,52 @@ const InterviewAI: React.FC = () => {
                 </Button>
               </div>
             </div>
+
+            {/* Job Description Card */}
+            <div className="bg-gray-900/60 rounded-xl shadow-lg border border-purple-500/20 p-4 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium text-purple-100 flex items-center gap-2">
+                  <Briefcase size={18} />
+                  Job Description
+                </h3>
+                <div className="flex gap-2">
+                  {jobDescriptionData && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs h-7 px-2 bg-red-900/30 hover:bg-red-900/40 text-red-300"
+                      onClick={removeJobDescription}
+                    >
+                      <X size={14} className="mr-1" />
+                      Remove
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7 px-2 bg-purple-900/30 hover:bg-purple-900/40 text-purple-300 border-purple-500/30"
+                    onClick={() => setShowJobDescPopup(true)}
+                  >
+                    {jobDescriptionData ? "Update" : "Add"}
+                  </Button>
+                </div>
+              </div>
+              
+              {jobDescriptionData ? (
+                <div className="bg-gray-800/40 rounded-lg p-3 max-h-40 overflow-y-auto">
+                  <p className="text-sm text-gray-300 whitespace-pre-line">
+                    {jobDescriptionData.content.length > 300 
+                      ? `${jobDescriptionData.content.substring(0, 300)}...` 
+                      : jobDescriptionData.content}
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-gray-800/20 rounded-lg p-4 text-center border border-dashed border-purple-500/30">
+                  <p className="text-sm text-purple-300/80">No job description added</p>
+                  <p className="text-xs text-purple-400/60 mt-1">Add one to personalize your interview</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Chat Section */}
@@ -636,7 +829,9 @@ const InterviewAI: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-medium text-purple-100">Ready for Interview</p>
-                        <p className="text-sm text-purple-300/80">Upload your resume to begin</p>
+                        <p className="text-sm text-purple-300/80">
+                          {resumeData ? "Start speaking to begin" : "Upload your resume to begin"}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -711,7 +906,7 @@ const InterviewAI: React.FC = () => {
               </Button>
 
               <Button
-                onClick={() => setShowPopup(true)}
+                onClick={() => setShowResumePopup(true)}
                 className="flex-1 bg-purple-600/80 hover:bg-purple-600 text-white shadow-sm backdrop-blur-sm transition-all duration-200"
               >
                 <FileText size={16} className="mr-2" />
@@ -791,12 +986,20 @@ const InterviewAI: React.FC = () => {
       </div>
 
       {/* Upload Resume Modal */}
-      {showPopup && (
+      {showResumePopup && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-gray-900/95 rounded-xl shadow-xl border border-purple-500/30 p-6 max-w-md w-full mx-4 backdrop-blur-sm">
-            <h3 className="text-lg font-semibold text-purple-100 mb-2">
-              {resumeData ? "Update Resume" : "Upload Resume"}
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-purple-100">
+                {resumeData ? "Update Resume" : "Upload Resume"}
+              </h3>
+              <button 
+                onClick={() => setShowResumePopup(false)} 
+                className="text-purple-300/70 hover:text-purple-100 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
             <p className="text-purple-300/80 mb-6 text-sm">
               {resumeData
                 ? "Upload a new resume to replace the current one."
@@ -832,7 +1035,7 @@ const InterviewAI: React.FC = () => {
 
             <div className="flex gap-3">
               <Button
-                onClick={() => setShowPopup(false)}
+                onClick={() => setShowResumePopup(false)}
                 className="flex-1 bg-gray-800/60 hover:bg-gray-800/80 text-purple-100 border border-gray-700/50 hover:border-gray-600/60"
                 disabled={isUploading}
               >
@@ -844,6 +1047,71 @@ const InterviewAI: React.FC = () => {
                 disabled={isUploading}
               >
                 {isUploading ? "Uploading..." : "Upload"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Job Description Modal */}
+      {showJobDescPopup && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-900/95 rounded-xl shadow-xl border border-purple-500/30 p-6 max-w-md w-full mx-4 backdrop-blur-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-purple-100">
+                {jobDescriptionData ? "Update Job Description" : "Add Job Description"}
+              </h3>
+              <button 
+                onClick={() => setShowJobDescPopup(false)} 
+                className="text-purple-300/70 hover:text-purple-100 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-sm text-purple-300/80 mb-3">
+                Add a job description to tailor the interview questions to specific role requirements.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-purple-100">Option 1: Upload File</h4>
+                  <div
+                    onClick={triggerJobDescFileUpload}
+                    className="border-2 border-dashed border-purple-500/40 hover:border-purple-400/60 rounded-lg p-4 text-center cursor-pointer transition-colors hover:bg-purple-950/20"
+                  >
+                    <Upload size={18} className="mx-auto text-purple-400 mb-1" />
+                    <p className="text-xs text-purple-300/80">PDF, DOC, DOCX, or TXT (max 5MB)</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-purple-100">Option 2: Enter Manually</h4>
+                  <Textarea
+                    value={manualJobDescription}
+                    onChange={(e) => setManualJobDescription(e.target.value)}
+                    placeholder="Paste job description here..."
+                    className="bg-gray-800/60 border-gray-700/50 text-gray-100 min-h-[120px]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setShowJobDescPopup(false)}
+                className="flex-1 bg-gray-800/60 hover:bg-gray-800/80 text-purple-100 border border-gray-700/50 hover:border-gray-600/60"
+                disabled={isUploading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleManualJobDescriptionSubmit}
+                className="flex-1 bg-purple-600/80 hover:bg-purple-600 text-white"
+                disabled={isUploading || !manualJobDescription.trim()}
+              >
+                Add Description
               </Button>
             </div>
           </div>

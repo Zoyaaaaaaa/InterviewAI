@@ -68,6 +68,6 @@
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./types"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/resume/page.tsx", "app/api/upload-resume/route.js", "app/api/analyzeresume/route.js", "app/api/resume-upload/route.js", "app/api/resume-upload/route.js", "app/api/resume-upload/route.js", "app/api/resume-upload/route.js", "app/api/text-to-speech/route.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/resume/page.tsx", "app/api/upload-resume/route.js", "app/api/analyzeresume/route.js", "app/api/resume-upload/route.js", "app/api/resume-upload/route.js", "app/api/resume-upload/route.js", "app/api/resume-upload/route.js", "app/api/text-to-speech/route.js", "app/voice-analysis/page.tsx"],
   "exclude": ["node_modules"]
 }

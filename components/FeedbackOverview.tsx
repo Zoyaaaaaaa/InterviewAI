@@ -568,8 +568,8 @@ export default function FeedbackOverview() {
 
   const calculateTrend = (metric: keyof Omit<Feedback, 'id' | 'created_at'>): number => {
     if (feedback.length < 2) return 0
-    const recent = feedback.slice(-3) // Last 3 interviews
-    const previous = feedback.slice(-6, -3) // 3 interviews before that
+    const recent = feedback.slice(-4) // Last 4 interviews
+    const previous = feedback.slice(-6, -4) // 4 interviews before that
     
     if (previous.length === 0) return 0
     
