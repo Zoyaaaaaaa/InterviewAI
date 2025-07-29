@@ -1,3 +1,8 @@
+<img width="1600" height="876" alt="image" src="https://github.com/user-attachments/assets/0114299c-e7a1-4c20-b687-3f097d8a8d72" />
+
+<img width="1872" height="1001" alt="image" src="https://github.com/user-attachments/assets/737f23af-2e43-4c4e-a59c-4decf002a347" />
+
+
 <a href="https://your-demo-link.vercel.app/">
   <h1 align="center">🚀 InterviewAI - Your Personalized Interview Preparation Companion</h1>
 </a>
